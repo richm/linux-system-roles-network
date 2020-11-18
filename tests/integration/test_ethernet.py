@@ -5,7 +5,6 @@ import logging
 import os
 import pytest
 import subprocess
-import sys
 
 from importlib import import_module
 
@@ -14,30 +13,15 @@ try:
 except ImportError:
     import mock
 
-_is_role = os.path.exists(
-    os.path.join(os.path.dirname(__file__), "../roles/linux-system-roles.network")
-)
-if _is_role:
-    parentdir = os.path.normpath(os.path.join(os.path.dirname(__file__), "../../"))
-else:  # collection
-    parentdir = os.path.normpath(os.path.join(os.path.dirname(__file__), "../"))
-with mock.patch.object(
-    sys,
-    "path",
-    [parentdir, os.path.join(parentdir, "module_utils/network_lsr")] + sys.path,
+parent_dir = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", ".."))
+
+with mock.patch.dict(
+    "sys.modules",
+    {
+        "ansible.module_utils.basic": mock.Mock(),
+    },
 ):
-    with mock.patch.dict(
-        "sys.modules",
-        {
-            "ansible": mock.Mock(),
-            "ansible.module_utils": __import__("module_utils"),
-            "ansible.module_utils.basic": mock.Mock(),
-        },
-    ):
-        if _is_role:
-            nc = import_module("library.network_connections")
-        else:
-            nc = import_module("modules.network_connections")
+    import network_connections as nc
 
 
 class PytestRunEnvironment(nc.RunEnvironment):
@@ -105,20 +89,13 @@ def _get_ip_addresses(interface):
 
 @pytest.fixture
 def network_lsr_nm_mock():
-    with mock.patch.object(
-        sys,
-        "path",
-        [parentdir, os.path.join(parentdir, "module_utils/network_lsr/nm")] + sys.path,
+    with mock.patch.dict(
+        "sys.modules",
+        {
+            "ansible.module_utils.basic": mock.Mock(),
+        },
     ):
-        with mock.patch.dict(
-            "sys.modules",
-            {
-                "ansible": mock.Mock(),
-                "ansible.module_utils": __import__("module_utils"),
-                "ansible.module_utils.basic": mock.Mock(),
-            },
-        ):
-            yield
+        yield
 
 
 def test_static_ip_with_ethernet(testnic1, provider, network_lsr_nm_mock):
