@@ -6,8 +6,6 @@ import os
 import pytest
 import subprocess
 
-from importlib import import_module
-
 try:
     from unittest import mock
 except ImportError:
