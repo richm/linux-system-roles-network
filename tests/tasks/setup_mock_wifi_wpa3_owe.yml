@@ -1,0 +1,72 @@
+# SPDX-License-Identifier: BSD-3-Clause
+---
+- name: install hostapd and mac80211_hwsim kernel module in RHEL 8
+  shell: |
+    yum-config-manager --add-repo http://download.eng.brq.redhat.com/rhel-8/rel-eng/RHEL-8/latest-RHEL-8.3.0/compose/BaseOS/$(uname -p)/os
+    rpm --import http://download.eng.brq.redhat.com/rhel-8/rel-eng/RHEL-8/latest-RHEL-8.3.0/compose/BaseOS/$(uname -p)/os/RPM-GPG-KEY-redhat-release
+    yum-config-manager --add-repo http://download.eng.brq.redhat.com/rhel-8/rel-eng/RHEL-8/latest-RHEL-8.3.0/compose/AppStream/$(uname -p)/os/
+    rpm --import http://download.eng.brq.redhat.com/rhel-8/rel-eng/RHEL-8/latest-RHEL-8.3.0/compose/AppStream/$(uname -p)/os/RPM-GPG-KEY-redhat-release
+    dnf -y install java-headless
+    cd /etc/yum.repos.d/
+    rpm -i http://hdn.corp.redhat.com/rhel7-csb-stage/RPMS/noarch/redhat-internal-cert-install-0.1-23.el7.csb.noarch.rpm
+    curl -L -O https://download.devel.redhat.com/rel-eng/RCMTOOLS/rcm-tools-rhel-8-baseos.repo
+    dnf -y -y install brew-tools
+    cd /root/
+    brew download-build --arch=$(uname -p) kernel-modules-internal-$(uname -r)
+    dnf -y install kernel-modules*.rpm
+    dnf -y copr enable liangwen12year/hostapd-owe
+    dnf -y install hostapd
+  when:
+    - ansible_distribution_major_version == '8'
+    - ansible_distribution == 'RedHat'
+
+- name: Install packages required to set up mock wifi network
+  package:
+    name:
+      - NetworkManager
+      - wpa_supplicant
+    state: present
+
+- name: install hostapd and mac80211_hwsim kernel module in CenOS 8
+  shell: |
+    dnf -y copr enable liangwen12year/hostapd-owe
+    dnf -y install hostapd
+    dnf -y --enablerepo=centosplus install kernel-plus-modules-internal
+  when:
+    - ansible_distribution_major_version == '8'
+    - ansible_distribution == 'CentOS'
+
+- name: install hostapd in Fedora
+  shell: |
+    dnf -y copr enable liangwen12year/hostapd-owe
+    dnf -y install hostapd
+  when:
+    - ansible_distribution == 'Fedora'
+
+- name: install mac80211_hwsim kernel modules in Fedora
+  shell: |
+    dnf -y install koji
+    koji download-build --arch=$(uname -p) kernel-modules-internal-$(uname -r)
+    dnf -y install kernel-modules*.rpm
+  when:
+    - ansible_distribution == 'Fedora'
+
+- name: reboot machine to update kernel version
+  reboot:
+
+- name: Create hostapd config
+  copy:
+    content: |
+      interface=wlan1
+      ssid=hostapd-owe
+      hw_mode=g
+      channel=6
+      wpa=2
+      wpa_passphrase=12345678
+      wpa_key_mgmt=OWE
+      rsn_pairwise=CCMP
+      ieee80211w=2
+      nas_identifier=ap.example.com
+    dest: /etc/hostapd/wireless.conf
+
+- include_tasks: tasks/start_mock_wifi.yml
