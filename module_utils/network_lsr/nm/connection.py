@@ -2,6 +2,10 @@
 
 # Handle NM.RemoteConnection
 
+from __future__ import absolute_import, division, print_function
+
+__metaclass__ = type
+
 import logging
 
 # Relative import is not support by ansible 2.8 yet
@@ -25,6 +29,7 @@ def delete_remote_connection(nm_profile, timeout, check_mode):
             _nm_profile_delete_call_back,
             user_data,
         )
+        # pylint: disable=logging-format-interpolation
         logging.debug(
             "Deleting profile {id}/{uuid} with timeout {timeout}".format(
                 id=nm_profile.get_id(), uuid=nm_profile.get_uuid(), timeout=timeout
@@ -77,6 +82,7 @@ def volatilize_remote_connection(nm_profile, timeout, check_mode):
             _nm_profile_volatile_update2_call_back,
             user_data,
         )
+        # pylint: disable=logging-format-interpolation
         logging.debug(
             "Volatilizing profile {id}/{uuid} with timeout {timeout}".format(
                 id=nm_profile.get_id(), uuid=nm_profile.get_uuid(), timeout=timeout

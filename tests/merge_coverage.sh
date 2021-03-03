@@ -23,7 +23,7 @@ export COVERAGE_FILE="${1}"
 shift
 
 tempdir="$(mktemp -d /tmp/coverage_merge-XXXXXX)"
-trap "rm -rf '${tempdir}'" EXIT
+trap 'rm -rf "${tempdir}"' EXIT
 
 cp --backup=numbered -- "${@}" "${tempdir}"
 # FIXME: Would not work if coverage files are not hidden but they are by

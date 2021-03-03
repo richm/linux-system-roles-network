@@ -76,8 +76,6 @@ NM_ONLY_TESTS = {
         MINIMUM_VERSION: "'1.25.1'",
         "comment": "# NetworkManager 1.25.1 introduced ethtool coalesce support",
     },
-    "playbooks/tests_802_1x_updated.yml": {},
-    "playbooks/tests_802_1x.yml": {},
     "playbooks/tests_reapply.yml": {},
     # team interface is not supported on Fedora
     "playbooks/tests_team.yml": {
@@ -122,7 +120,7 @@ def create_nm_playbook(test_playbook):
         EXTRA_RUN_CONDITION, ""
     )
     if extra_run_condition:
-        extra_run_condition = "{}{}\n".format(
+        extra_run_condition = "{0}{1}\n".format(
             EXTRA_RUN_CONDITION_PREFIX, extra_run_condition
         )
 
@@ -217,7 +215,7 @@ def main():
 
     if missing:
         print("ERROR: No NM or initscripts tests found for:\n" + ", \n".join(missing))
-        print("Try to generate them with '{} generate'".format(sys.argv[0]))
+        print("Try to generate them with '{0} generate'".format(sys.argv[0]))
         returncode = 1
 
     return returncode

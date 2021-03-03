@@ -2,6 +2,10 @@
 
 # Handle NM.ActiveConnection
 
+from __future__ import absolute_import, division, print_function
+
+__metaclass__ = type
+
 import logging
 
 # Relative import is not support by ansible 2.8 yet
@@ -21,6 +25,7 @@ def deactivate_active_connection(nm_ac, timeout, check_mode):
         return False
     if not check_mode:
         main_loop = client.get_mainloop(timeout)
+        # pylint: disable=logging-format-interpolation
         logging.debug(
             "Deactivating {id} with timeout {timeout}".format(
                 id=nm_ac.get_id(), timeout=timeout
@@ -30,6 +35,7 @@ def deactivate_active_connection(nm_ac, timeout, check_mode):
         handler_id = nm_ac.connect(
             NM_AC_STATE_CHANGED_SIGNAL, _nm_ac_state_change_callback, user_data
         )
+        # pylint: disable=logging-format-interpolation
         logging.debug(
             "Registered {signal} on client.NM.ActiveConnection {id}".format(
                 signal=NM_AC_STATE_CHANGED_SIGNAL, id=nm_ac.get_id()
@@ -44,6 +50,7 @@ def deactivate_active_connection(nm_ac, timeout, check_mode):
                 _nm_ac_deactivate_call_back,
                 user_data,
             )
+            # pylint: disable=logging-format-interpolation
             logging.debug(
                 "Deactivating client.NM.ActiveConnection {0}".format(nm_ac.get_id())
             )
@@ -55,12 +62,14 @@ def _nm_ac_state_change_callback(nm_ac, state, reason, user_data):
     main_loop = user_data
     if main_loop.is_cancelled:
         return
+    # pylint: disable=logging-format-interpolation
     logging.debug(
         "Got client.NM.ActiveConnection state change: {id}: {state} {reason}".format(
             id=nm_ac.get_id(), state=state, reason=reason
         )
     )
     if nm_ac.props.state == client.NM.ActiveConnectionState.DEACTIVATED:
+        # pylint: disable=logging-format-interpolation
         logging.debug(
             "client.NM.ActiveConnection {0} is deactivated".format(nm_ac.get_id())
         )
@@ -81,6 +90,7 @@ def _nm_ac_deactivate_call_back(nm_client, result, user_data):
         if e.matches(
             client.NM.ManagerError.quark(), client.NM.ManagerError.CONNECTIONNOTACTIVE
         ):
+            # pylint: disable=logging-format-interpolation
             logging.info(
                 "Connection is not active on {0}, no need to deactivate".format(
                     nm_ac_id

@@ -1,5 +1,9 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
+from __future__ import absolute_import, division, print_function
+
+__metaclass__ = type
+
 import logging
 
 # Relative import is not support by ansible 2.8 yet
@@ -25,6 +29,7 @@ class NetworkManagerProvider:
                     nm_ac, timeout, check_mode
                 )
         if not changed:
+            # pylint: disable=logging-format-interpolation
             logging.info("No active connection for {0}".format(connection_name))
 
         return changed
@@ -49,6 +54,7 @@ class NetworkManagerProvider:
                         nm_profile, timeout, check_mode
                     )
         if not changed:
+            # pylint: disable=logging-format-interpolation
             logging.info("No connection with UUID {0} to volatilize".format(uuid))
 
         return changed
