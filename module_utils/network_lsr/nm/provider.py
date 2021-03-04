@@ -29,8 +29,7 @@ class NetworkManagerProvider:
                     nm_ac, timeout, check_mode
                 )
         if not changed:
-            # pylint: disable=logging-format-interpolation
-            logging.info("No active connection for {0}".format(connection_name))
+            logging.info("No active connection for %s", connection_name)
 
         return changed
 
@@ -54,8 +53,7 @@ class NetworkManagerProvider:
                         nm_profile, timeout, check_mode
                     )
         if not changed:
-            # pylint: disable=logging-format-interpolation
-            logging.info("No connection with UUID {0} to volatilize".format(uuid))
+            logging.info("No connection with UUID %s to volatilize", uuid)
 
         return changed
 

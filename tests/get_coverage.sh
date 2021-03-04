@@ -31,7 +31,10 @@ call_ansible() {
 }
 
 remote_coverage_dir="$(mktemp -d /tmp/remote_coverage-XXXXXX)"
-trap 'rm -rf "${remote_coverage_dir}"' EXIT
+# we want to expand ${remote_coverage_dir} here, so tell SC to be quiet
+# https://github.com/koalaman/shellcheck/wiki/SC2064
+# shellcheck disable=SC2064
+trap "rm -rf '${remote_coverage_dir}'" EXIT
 ansible-playbook -i "${host}", get_coverage.yml -e "test_playbook=${playbook} destdir=${remote_coverage_dir}"
 
 #COVERAGE_FILE=remote-coverage coverage combine remote-coverage/tests_*/*/root/.coverage

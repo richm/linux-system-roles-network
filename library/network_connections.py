@@ -777,10 +777,7 @@ class NMUtil:
         if compare_flags is None:
             compare_flags = NM.SettingCompareFlags.IGNORE_TIMESTAMP
 
-        # this is really odd, but I'm assuming there is a double-negative
-        # here for a reason . . . .
-        # pylint: disable=unneeded-not
-        return not (not (con_a.compare(con_b, compare_flags)))
+        return con_a.compare(con_b, compare_flags)
 
     def connection_is_active(self, con):
         NM = Util.NM()
@@ -1625,10 +1622,7 @@ class Cmd(object):
                 raise AssertionError(
                     "invalid value {0} for self.check_mode".format(self.check_mode)
                 )
-            c = []
-            # pylint: disable=blacklisted-name
-            for _ in range(0, len(self.connections)):
-                c.append({"changed": False})
+            c = [{"changed": False}] * len(self.connections)
             self._connections_data = c
         return c
 
@@ -2015,8 +2009,7 @@ class Cmd_nm(Cmd):
                     idx, "ethtool.%s specified but not supported by NM", specified
                 )
 
-            # pylint: disable=blacklisted-name
-            for option, _ in specified.items():
+            for option in specified.keys():
                 nm_name = nm_get_name_fcnt(option)
                 if not nm_name:
                     self.log_fatal(

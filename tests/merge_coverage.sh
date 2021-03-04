@@ -23,7 +23,10 @@ export COVERAGE_FILE="${1}"
 shift
 
 tempdir="$(mktemp -d /tmp/coverage_merge-XXXXXX)"
-trap 'rm -rf "${tempdir}"' EXIT
+# we want to expand ${tempdir} here, so tell SC to be quiet
+# https://github.com/koalaman/shellcheck/wiki/SC2064
+# shellcheck disable=SC2064
+trap "rm -rf '${tempdir}'" EXIT
 
 cp --backup=numbered -- "${@}" "${tempdir}"
 # FIXME: Would not work if coverage files are not hidden but they are by
