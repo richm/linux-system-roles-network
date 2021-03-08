@@ -30,7 +30,6 @@ tests/network/ensure_provider_tests.py shebang!skip
 tests/network/get_coverage.sh shebang!skip
 tests/network/get_total_coverage.sh shebang!skip
 tests/network/merge_coverage.sh shebang!skip
-.travis/custom.sh shebang!skip
 tests/network/ensure_provider_tests.py future-import-boilerplate!skip
 tests/network/integration/conftest.py future-import-boilerplate!skip
 tests/network/integration/test_ethernet.py future-import-boilerplate!skip

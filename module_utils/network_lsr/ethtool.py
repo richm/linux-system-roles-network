@@ -50,9 +50,7 @@ def get_perm_addr(ifname):
             res = ecmd.tobytes()
         except AttributeError:  # tobytes() is not available in python2
             res = ecmd.tostring()
-        # disable check for bad names:
-        # pylint: disable=C0102
-        _, size, perm_addr = struct.unpack("II%is" % MAX_ADDR_LEN, res)
+        dummy, size, perm_addr = struct.unpack("II%is" % MAX_ADDR_LEN, res)
         perm_addr = Util.mac_ntoa(perm_addr[:size])
     except IOError:
         perm_addr = None
