@@ -77,7 +77,7 @@ class ArgUtil:
 class ValidationError(MyError):
     def __init__(self, name, message):
         # pylint: disable=non-parent-init-called
-        Exception.__init__(self, name + ": " + message)
+        super(ValidationError, self).__init__(name + ": " + message)
         self.error_message = message
         self.name = name
 
