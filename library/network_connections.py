@@ -13,12 +13,15 @@ author: Thomas Haller (@thom311)
 short_description: module for network role to manage connection profiles
 requirements: [pygobject, dbus, NetworkManager]
 version_added: "2.0"
-description: Manage networking profiles (connections) for NetworkManager and
-  initscripts networking providers. Documentation needs to be written. Note that
-  the network_connections module tightly integrates with the network role and
-  currently it is not expected to use this module outside the role. Thus, consult
-  README.md for examples for the role.  The requirements are only for the
-  NetworkManager (nm) provider
+description:
+  - "WARNING: Do not use this module directly! It is only for role internal use."
+  - |
+    Manage networking profiles (connections) for NetworkManager and
+    initscripts networking providers. Documentation needs to be written. Note that
+    the network_connections module tightly integrates with the network role and
+    currently it is not expected to use this module outside the role. Thus, consult
+    README.md for examples for the role.  The requirements are only for the
+    NetworkManager (nm) provider.
 options: {}
 """
 
