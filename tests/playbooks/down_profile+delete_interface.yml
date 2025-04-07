@@ -2,6 +2,8 @@
 ---
 - name: Import the playbook 'down_profile.yml'
   import_playbook: down_profile.yml
+  when: not __network_end_play | d(false)
+
 - name: Delete the interface
   hosts: all
   tasks:

@@ -28,6 +28,10 @@
         mode: "0644"
         create: true
 
+    - name: Reset end_play variable
+      set_fact:
+        __network_end_play: false
+
     - name: Configure routes and routing rules with error handling
       block:
         - name: Configure connection profile and specify the numeric table in
@@ -142,9 +146,15 @@
               failure is not raised when the distro's major version is 7
           when: ansible_distribution_major_version == "7"
 
+        - name: Clear errors
+          meta: clear_host_errors
+
+        - name: Set flag that network test play has ended
+          set_fact:
+            __network_end_play: true
+
         - name: Force playbook end earlier after rescue
           meta: end_play
-          when: true
 
     # the routing rule selector sport and ipproto are not supported by iproute
     # since v4.17.0, and the iproute installed in CentOS-7 and RHEL-7 is
